@@ -12,14 +12,19 @@ COPY sockd.sh /usr/local/bin/
 
 RUN true \
     && echo "http://dl-4.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories \
-    && apk add --update-cache dante-server openvpn bash openresolv openrc privoxy \
+    && apk add --update-cache dante-server openvpn bash openresolv openrc privoxy tor runit tini \
     && rm -rf /var/cache/apk/* \
     && chmod a+x /usr/local/bin/sockd.sh \
     && true
 
 COPY sockd.conf /etc/
+COPY service /etc/service/
 
 ENTRYPOINT [ \
     "/bin/bash", "-c", \
     "cd /etc/openvpn && /usr/sbin/openvpn --config *.conf --script-security 2 --up /usr/local/bin/sockd.sh" \
+    "tini", "--" \
     ]
+
+CMD ["runsvdir", "/etc/service"]
+
