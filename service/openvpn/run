@@ -1,2 +1,0 @@
-#!/bin/sh
-cd /etc/openvpn && /usr/sbin/openvpn --config *.conf --script-security 2

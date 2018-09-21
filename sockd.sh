@@ -1,4 +1,4 @@
 #!/bin/bash
 set -e
 [ -f /etc/openvpn/up.sh ] && /etc/openvpn/up.sh "$@"
-#/usr/sbin/sockd -D
+/usr/sbin/privoxy "/etc/privoxy/config"
