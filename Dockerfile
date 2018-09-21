@@ -11,6 +11,7 @@ FROM alpine
 EXPOSE 8118
 
 COPY service /etc/service/
+COPY sockd.sh /usr/local/bin/
 
 RUN true \
     && echo "http://dl-4.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories \
@@ -18,6 +19,7 @@ RUN true \
     && rm -rf /var/cache/apk/* \
     && chmod a+x /etc/service/openvpn/run \
     && chmod a+x /etc/service/privoxy/run \
+    && chmod a+x /usr/local/bin/sockd.sh \
     && true
 
 ENTRYPOINT ["tini", "--"]
