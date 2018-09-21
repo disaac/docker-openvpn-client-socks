@@ -8,16 +8,17 @@
 
 FROM alpine
 
-COPY sockd.sh /usr/local/bin/
+EXPOSE 8118
+
+COPY service /etc/service/
 
 RUN true \
     && echo "http://dl-4.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories \
-    && apk --update add openvpn bash openresolv openrc privoxy tor runit tini \
+    && apk add --update-cache openvpn bash openresolv openrc privoxy runit tini \
     && rm -rf /var/cache/apk/* \
-    && chmod a+x /usr/local/bin/sockd.sh \
+    && chmod a+x /etc/service/openvpn/run \
+    && chmod a+x /etc/service/privoxy/run \
     && true
-
-COPY service /etc/service/
 
 ENTRYPOINT ["tini", "--"]
 CMD ["runsvdir", "/etc/service"]
