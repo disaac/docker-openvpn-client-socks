@@ -1,13 +1,30 @@
-#!/bin/bash
-
-exec docker run \
+#!/usr/bin/env bash
+if [[ $OVERRIDE_BVPN == "yes" ]];then
+docker run \
+        --rm \
+        --tty \
+        --interactive \
+        -e OVERRIDE_BVPN=yes \
+        --device=/dev/net/tun \
+        --name=openvpn-client-ovrd \
+        --cap-add=NET_ADMIN \
+        --publish 8118:8118 \
+        --volume "$(realpath "$1"):/etc/openvpn/:ro" \
+        --sysctl net.ipv6.conf.all.disable_ipv6=0 \
+        docker-openvpn-client-socks-blvpn:latest
+else
+docker run \
     --rm \
     --tty \
     --interactive \
+    -e BLACKVPN_USER=${BLACKVPN_USER} \
+    -e BLACKVPN_PASS=${BLACKVPN_PASS} \
+    -e BLACKVPN_CONF=${BLACKVPN_CONF} \
+    -e OVERRIDE_BVPN=no \
     --device=/dev/net/tun \
-    --name=openvpn-client \
+    --name=openvpn-client-blvpn \
     --cap-add=NET_ADMIN \
-    --publish 0.0.0.0:8118:8118 \
-    --volume "$(realpath "$1"):/etc/openvpn/:ro" \
+    --publish 8118:8118 \
     --sysctl net.ipv6.conf.all.disable_ipv6=0 \
-    docker-openvpn-client-socks:latest
+    docker-openvpn-client-socks-blvpn:latest
+fi
